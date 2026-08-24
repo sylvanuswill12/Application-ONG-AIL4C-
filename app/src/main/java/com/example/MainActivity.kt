@@ -153,7 +153,12 @@ fun MainAppContent(viewModel: Ail4cViewModel) {
                 AnimatedContent(
                     targetState = currentDestination,
                     transitionSpec = {
-                        fadeIn().togetherWith(fadeOut())
+                        (fadeIn(animationSpec = androidx.compose.animation.core.tween(300)) +
+                                androidx.compose.animation.scaleIn(initialScale = 0.98f, animationSpec = androidx.compose.animation.core.tween(300)))
+                            .togetherWith(
+                                fadeOut(animationSpec = androidx.compose.animation.core.tween(250)) +
+                                        androidx.compose.animation.scaleOut(targetScale = 0.98f, animationSpec = androidx.compose.animation.core.tween(250))
+                            )
                     },
                     label = "ScreenTransition"
                 ) { destination ->

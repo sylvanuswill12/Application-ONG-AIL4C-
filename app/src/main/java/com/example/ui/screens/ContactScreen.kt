@@ -288,12 +288,12 @@ fun ContactScreen(
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = "Siège Social & Pôles Opérationnels",
+                                text = "Siège & Pôle Opérationnel Principal",
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text = "Abidjan • Bouaké (UAO) • Côte d'Ivoire",
+                                text = "Bouaké, Côte d'Ivoire (Campus UAO & Siège Régional)",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface

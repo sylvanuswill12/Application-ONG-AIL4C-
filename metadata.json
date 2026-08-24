@@ -1,6 +1,6 @@
 {
   "name": "ONG-AIL4C",
-  "description": "Association Ivoirienne de Lutte Contre le Changement Climatique et le Chômage — Agir aujourd'hui pour un avenir durable.",
+  "description": "Association Ivoirienne de Lutte Contre le Changement Climatique et le Chômage (Bouaké, Côte d'Ivoire).",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

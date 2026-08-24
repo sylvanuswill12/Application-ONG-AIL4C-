@@ -109,15 +109,6 @@ fun AppDrawer(
                         fontSize = 12.sp,
                         lineHeight = 16.sp
                     )
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Text(
-                        text = "« Agir aujourd'hui pour un avenir durable »",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = AccentOrange,
-                        fontWeight = FontWeight.SemiBold
-                    )
                 }
             }
 

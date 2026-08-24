@@ -150,20 +150,20 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(10.dp))
 
                     Text(
-                        text = "Agir aujourd'hui pour un avenir durable",
-                        style = MaterialTheme.typography.displayMedium,
+                        text = "Association Ivoirienne de Lutte Contre le Changement Climatique et le Chômage",
+                        style = MaterialTheme.typography.headlineMedium,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
-                        lineHeight = 32.sp
+                        lineHeight = 30.sp
                     )
 
                     Spacer(modifier = Modifier.height(10.dp))
 
                     Text(
-                        text = "« Une organisation ivoirienne engagée pour le climat, l'emploi des jeunes et le développement durable. »",
-                        style = MaterialTheme.typography.bodyLarge,
+                        text = "Engagement citoyen, préservation de l'environnement et autonomisation de la jeunesse en Côte d'Ivoire.",
+                        style = MaterialTheme.typography.bodyMedium,
                         color = Color(0xFFF1F5F9),
-                        lineHeight = 22.sp
+                        lineHeight = 20.sp
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))

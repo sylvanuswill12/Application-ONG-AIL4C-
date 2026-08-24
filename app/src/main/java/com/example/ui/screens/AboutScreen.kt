@@ -131,22 +131,6 @@ fun AboutScreen(
                         color = Color(0xFFE2E8F0),
                         lineHeight = 22.sp
                     )
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(AccentOrange)
-                            .padding(horizontal = 12.dp, vertical = 6.dp)
-                    ) {
-                        Text(
-                            text = "« Agir aujourd'hui pour un avenir durable »",
-                            style = MaterialTheme.typography.labelLarge,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
                 }
             }
         }

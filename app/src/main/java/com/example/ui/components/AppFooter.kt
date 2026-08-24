@@ -123,7 +123,7 @@ fun AppFooter(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "« Agir aujourd'hui pour un avenir durable »",
+                        text = "Climat • Emploi des Jeunes • Environnement",
                         style = MaterialTheme.typography.labelMedium,
                         color = AccentOrange,
                         fontWeight = FontWeight.Medium
@@ -210,7 +210,7 @@ fun AppFooter(
             // Location
             ContactLineItem(
                 icon = Icons.Default.LocationOn,
-                text = "Abidjan, Côte d'Ivoire",
+                text = "Bouaké, Côte d'Ivoire",
                 onClick = {}
             )
 

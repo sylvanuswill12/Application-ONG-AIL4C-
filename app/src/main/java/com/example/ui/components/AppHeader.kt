@@ -68,33 +68,6 @@ fun AppHeader(
         tonalElevation = 2.dp
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            // Top green announcement ribbon
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(ForestGreenDark)
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "🇨🇮 « Agir aujourd'hui pour un avenir durable »",
-                    color = Color.White.copy(alpha = 0.95f),
-                    style = MaterialTheme.typography.labelMedium,
-                    fontSize = 11.5.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = "Abidjan • Côte d'Ivoire",
-                    color = AccentOrange.copy(alpha = 0.95f),
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 11.sp
-                )
-            }
-
             // Main Institutional Header
             Row(
                 modifier = Modifier
