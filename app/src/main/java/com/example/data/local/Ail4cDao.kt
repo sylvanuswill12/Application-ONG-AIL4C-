@@ -23,6 +23,9 @@ interface Ail4cDao {
     @Query("SELECT * FROM actions ORDER BY id DESC")
     fun getAllActions(): Flow<List<ActionItem>>
 
+    @Query("SELECT COUNT(*) FROM actions")
+    suspend fun getActionsCount(): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAction(action: ActionItem)
 
@@ -41,6 +44,9 @@ interface Ail4cDao {
 
     @Query("SELECT * FROM projects ORDER BY id DESC")
     fun getAllProjects(): Flow<List<ProjectItem>>
+
+    @Query("SELECT COUNT(*) FROM projects")
+    suspend fun getProjectsCount(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProject(project: ProjectItem)
@@ -61,6 +67,9 @@ interface Ail4cDao {
     @Query("SELECT * FROM news ORDER BY id DESC")
     fun getAllNews(): Flow<List<NewsArticle>>
 
+    @Query("SELECT COUNT(*) FROM news")
+    suspend fun getNewsCount(): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNews(news: NewsArticle)
 
@@ -79,6 +88,9 @@ interface Ail4cDao {
 
     @Query("SELECT * FROM opportunities ORDER BY id DESC")
     fun getAllOpportunities(): Flow<List<OpportunityItem>>
+
+    @Query("SELECT COUNT(*) FROM opportunities")
+    suspend fun getOpportunitiesCount(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOpportunity(opportunity: OpportunityItem)

@@ -47,4 +47,10 @@ class Ail4cRepository(private val dao: Ail4cDao) {
 
     suspend fun submitVolunteerApplication(app: VolunteerApplication) = dao.insertVolunteerApplication(app)
     suspend fun deleteVolunteerApplication(app: VolunteerApplication) = dao.deleteVolunteerApplication(app)
+
+    suspend fun ensureDefaultDataPopulated() {
+        if (dao.getActionsCount() == 0 || dao.getProjectsCount() == 0 || dao.getNewsCount() == 0 || dao.getOpportunitiesCount() == 0) {
+            com.example.data.local.Ail4cDatabase.populateInitialData(dao)
+        }
+    }
 }

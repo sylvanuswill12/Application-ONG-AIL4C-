@@ -49,19 +49,6 @@ abstract class Ail4cDatabase : RoomDatabase() {
                 instance
             }
         }
-    }
-
-    private class Ail4cDatabaseCallback(
-        private val scope: CoroutineScope
-    ) : RoomDatabase.Callback() {
-        override fun onCreate(db: SupportSQLiteDatabase) {
-            super.onCreate(db)
-            INSTANCE?.let { database ->
-                scope.launch(Dispatchers.IO) {
-                    populateInitialData(database.ail4cDao())
-                }
-            }
-        }
 
         suspend fun populateInitialData(dao: Ail4cDao) {
             // Pre-seed Actions enrichies depuis les publications Facebook et Instagram
@@ -321,6 +308,19 @@ abstract class Ail4cDatabase : RoomDatabase() {
                     )
                 )
             )
+        }
+    }
+
+    private class Ail4cDatabaseCallback(
+        private val scope: CoroutineScope
+    ) : RoomDatabase.Callback() {
+        override fun onCreate(db: SupportSQLiteDatabase) {
+            super.onCreate(db)
+            scope.launch(Dispatchers.IO) {
+                INSTANCE?.let { database ->
+                    populateInitialData(database.ail4cDao())
+                }
+            }
         }
     }
 }

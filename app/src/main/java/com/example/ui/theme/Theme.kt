@@ -67,9 +67,14 @@ fun Ail4cTheme(
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.surface.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            val activity = (view.context as? Activity)
+                ?: (generateSequence(view.context) { if (it is android.content.ContextWrapper) it.baseContext else null }
+                    .filterIsInstance<Activity>()
+                    .firstOrNull())
+            activity?.window?.let { window ->
+                window.statusBarColor = colorScheme.surface.toArgb()
+                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            }
         }
     }
 

@@ -12,6 +12,7 @@ import com.example.data.model.OpportunityItem
 import com.example.data.model.ProjectItem
 import com.example.data.model.VolunteerApplication
 import com.example.data.repository.Ail4cRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +36,16 @@ enum class AppDestination(val title: String, val route: String) {
 }
 
 class Ail4cViewModel(private val repository: Ail4cRepository) : ViewModel() {
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.ensureDefaultDataPopulated()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     // Active screen navigation
     private val _currentDestination = MutableStateFlow(AppDestination.HOME)
