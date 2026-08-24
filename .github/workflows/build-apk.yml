@@ -26,21 +26,25 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Setup Gradle 9.3.1
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.3.1'
 
       - name: Build Debug APK
         run: |
-          gradle :app:assembleDebug -Dkotlin.compiler.execution.strategy=daemon --stacktrace
+          gradle :app:assembleDebug --no-daemon --no-configuration-cache
+
+      - name: Verify APK generated
+        run: |
+          ls -la app/build/outputs/apk/debug/
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Application-ONG-AIL4C-apk
           path: app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: warn
+          if-no-files-found: error
 
       - name: Create GitHub Release with APK
         uses: softprops/action-gh-release@v2
@@ -49,8 +53,8 @@ jobs:
           tag_name: v1.0.${{ github.run_number }}
           name: Application ONG-AIL4C (v1.0.${{ github.run_number }})
           body: |
-            Téléchargez l'application officielle ONG-AIL4C (.apk) ci-dessous.
-            Fichier: app-debug.apk
+            🎉 **Application officielle ONG-AIL4C**
+            Téléchargez le fichier `app-debug.apk` ci-dessous pour installer l'application sur votre téléphone Android.
           files: app/build/outputs/apk/debug/app-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
