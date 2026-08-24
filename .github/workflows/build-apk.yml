@@ -17,21 +17,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21 (Required for AGP 9.x and Gradle 9.x)
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+
+      - name: Accept Android SDK Licenses & Install Platforms
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" || true
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.3.1'
 
-      - name: Prepare environment and keys
+      - name: Prepare environment files
         run: |
           if [ -f "debug.keystore.base64" ]; then
             base64 -d debug.keystore.base64 > debug.keystore || true
@@ -44,9 +49,9 @@ jobs:
         run: |
           gradle :app:assembleDebug --no-daemon --stacktrace
 
-      - name: Verify APK
+      - name: Verify APK generated
         run: |
-          ls -lh app/build/outputs/apk/debug/
+          ls -la app/build/outputs/apk/debug/
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
@@ -55,16 +60,15 @@ jobs:
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
 
-      - name: Create GitHub Release
+      - name: Create GitHub Release with APK
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/')
         with:
-          tag_name: release-${{ github.run_number }}
-          name: Application ONG-AIL4C (Version ${{ github.run_number }})
+          tag_name: v1.0.${{ github.run_number }}
+          name: Application ONG-AIL4C (v1.0.${{ github.run_number }})
           body: |
-            ### 📱 Application Mobile Officielle ONG-AIL4C
-            
-            Téléchargez le fichier **`app-debug.apk`** ci-dessous pour installer l'application sur votre téléphone Android.
+            🎉 **Application mobile officielle ONG-AIL4C**
+            Téléchargez le fichier `app-debug.apk` ci-dessous pour installer l'application sur votre téléphone Android.
           files: app/build/outputs/apk/debug/app-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
