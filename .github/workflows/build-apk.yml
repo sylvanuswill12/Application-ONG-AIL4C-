@@ -5,6 +5,9 @@ on:
     branches: [ "**" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build Android APK
@@ -19,13 +22,14 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew || true
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.3.1'
 
-      - name: Build Debug APK with Gradle
-        run: gradle :app:assembleDebug
+      - name: Build Debug APK
+        run: gradle :app:assembleDebug --no-daemon
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
@@ -42,7 +46,7 @@ jobs:
           name: Application ONG-AIL4C (v1.0.${{ github.run_number }})
           body: |
             Téléchargez l'application officielle ONG-AIL4C (.apk) ci-dessous.
-            Installez-la sur votre téléphone Android.
+            Installez-la directement sur votre téléphone Android.
           files: app/build/outputs/apk/debug/app-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
