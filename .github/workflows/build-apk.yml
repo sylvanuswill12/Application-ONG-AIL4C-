@@ -23,22 +23,26 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Gradle 9.3.1
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.3.1'
 
       - name: Build Debug APK
-        run: gradle :app:assembleDebug --no-daemon
+        run: |
+          gradle :app:assembleDebug -Dkotlin.compiler.execution.strategy=daemon --stacktrace
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ONG-AIL4C-apk
+          name: Application-ONG-AIL4C-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: warn
 
-      - name: Create Release with APK
+      - name: Create GitHub Release with APK
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/')
         with:
@@ -46,7 +50,7 @@ jobs:
           name: Application ONG-AIL4C (v1.0.${{ github.run_number }})
           body: |
             Téléchargez l'application officielle ONG-AIL4C (.apk) ci-dessous.
-            Installez-la directement sur votre téléphone Android.
+            Fichier: app-debug.apk
           files: app/build/outputs/apk/debug/app-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
