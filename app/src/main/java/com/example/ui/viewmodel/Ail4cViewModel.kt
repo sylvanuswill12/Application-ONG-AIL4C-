@@ -69,6 +69,25 @@ class Ail4cViewModel(private val repository: Ail4cRepository) : ViewModel() {
     val currentUserProfile: StateFlow<UserProfile?> = repository.currentUserProfile
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
+    // Pull-to-refresh state
+    val isRefreshing = MutableStateFlow(false)
+
+    fun refreshData() {
+        viewModelScope.launch {
+            isRefreshing.value = true
+            try {
+                // Ensure default data & sync fresh data
+                repository.ensureDefaultDataPopulated()
+                kotlinx.coroutines.delay(650) // Smooth tactile feel for user feedback
+                toastMessage.value = "Page et données actualisées ! 🌿"
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                isRefreshing.value = false
+            }
+        }
+    }
+
     // Admin authorization check: only atchouyaosylvain59@gmail.com and ail4c03@gmail.com
     val isCurrentUserAdmin: StateFlow<Boolean> = repository.currentUserProfile
         .map { profile -> AdminConfig.isAuthorizedEmail(profile?.email) }

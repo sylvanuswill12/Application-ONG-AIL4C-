@@ -65,6 +65,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -181,20 +182,22 @@ fun ProfileScreen(
         sdf.format(Date(profile.registeredAt))
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color(0xFFF8FAFC))
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 16.dp)
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = { viewModel.refreshData() },
+        modifier = modifier.fillMaxSize()
     ) {
-        // Top Header
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF8FAFC))
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
-            Column {
+            // Top Header
+            Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = "Mon Profil",
                     fontSize = 26.sp,
@@ -208,41 +211,7 @@ fun ProfileScreen(
                 )
             }
 
-            if (!isEditing) {
-                Button(
-                    onClick = {
-                        editFullName = profile.fullName
-                        editEmail = profile.email
-                        editPhone = profile.phone
-                        editCity = profile.city
-                        editRoleInterest = profile.roleInterest
-                        editIsMember = profile.isMember
-                        errorMessage = null
-                        saveSuccessMessage = null
-                        isEditing = true
-                    },
-                    shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = ForestGreenPrimary),
-                    modifier = Modifier.testTag("profile_edit_btn")
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Modifier",
-                        modifier = Modifier.size(16.dp),
-                        tint = Color.White
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = "Modifier",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp,
-                        color = Color.White
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
         // Success / Error Banner
         saveSuccessMessage?.let { msg ->
@@ -430,6 +399,43 @@ fun ProfileScreen(
                     ProfileStatItem(title = "Statut", value = if (profile.isMember) "Adhérent Actif" else "Invité", color = ForestGreenPrimary)
                     ProfileStatItem(title = "Ville", value = profile.city.substringBefore(" (").substringBefore(","), color = Color(0xFF0F172A))
                     ProfileStatItem(title = "Inscrit le", value = registrationDate, color = Color(0xFF64748B))
+                }
+
+                if (!isEditing) {
+                    Spacer(modifier = Modifier.height(18.dp))
+                    Button(
+                        onClick = {
+                            editFullName = profile.fullName
+                            editEmail = profile.email
+                            editPhone = profile.phone
+                            editCity = profile.city
+                            editRoleInterest = profile.roleInterest
+                            editIsMember = profile.isMember
+                            errorMessage = null
+                            saveSuccessMessage = null
+                            isEditing = true
+                        },
+                        shape = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = ForestGreenPrimary),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp)
+                            .testTag("profile_edit_btn")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Modifier mes informations",
+                            modifier = Modifier.size(18.dp),
+                            tint = Color.White
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Modifier mes informations personnelles",
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 14.sp,
+                            color = Color.White
+                        )
+                    }
                 }
             }
         }
@@ -1161,6 +1167,7 @@ fun ProfileScreen(
         }
 
         Spacer(modifier = Modifier.height(30.dp))
+        }
     }
 
     // DONATION DIALOG

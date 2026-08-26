@@ -25,12 +25,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -51,6 +53,7 @@ import com.example.ui.theme.ForestGreenPrimary
 import com.example.ui.viewmodel.Ail4cViewModel
 import com.example.ui.viewmodel.AppDestination
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActionsScreen(
     viewModel: Ail4cViewModel,
@@ -68,11 +71,18 @@ fun ActionsScreen(
         "Insertion des jeunes"
     )
 
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = { viewModel.refreshData() },
+        modifier = modifier.fillMaxSize()
     ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
         // Banner
         item {
             Surface(
@@ -244,5 +254,6 @@ fun ActionsScreen(
         item {
             AppFooter(onNavigate = { viewModel.navigateTo(it) })
         }
+    }
     }
 }
