@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.School
+import androidx.compose.material.icons.filled.SystemUpdate
 import androidx.compose.material.icons.filled.TrackChanges
 import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.material3.Card
@@ -68,6 +69,7 @@ fun AppDrawer(
     userProfile: UserProfile?,
     onDestinationSelected: (AppDestination) -> Unit,
     onOpenAiAssistant: () -> Unit,
+    onCheckUpdates: () -> Unit = {},
     onLogout: () -> Unit,
     onCloseDrawer: () -> Unit,
     isAdmin: Boolean = false,
@@ -402,6 +404,21 @@ fun AppDrawer(
                     accent = true
                 )
             }
+
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
+
+            DrawerItemRow(
+                title = "Vérifier Mise à jour",
+                icon = Icons.Default.SystemUpdate,
+                selected = false,
+                onClick = {
+                    onCloseDrawer()
+                    onCheckUpdates()
+                }
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
         }

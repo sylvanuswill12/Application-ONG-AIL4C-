@@ -42,6 +42,7 @@ import com.example.ui.components.ActionDetailModal
 import com.example.ui.components.AiAssistantModal
 import com.example.ui.components.AppDrawer
 import com.example.ui.components.AppHeader
+import com.example.ui.components.AppUpdateDialog
 import com.example.ui.components.FullScreenImageViewer
 import com.example.ui.components.ModernBottomNavBar
 import com.example.ui.components.NewsDetailModal
@@ -102,6 +103,8 @@ fun MainAppContent(viewModel: Ail4cViewModel) {
     val showVolunteerDialog by viewModel.showVolunteerDialog.collectAsStateWithLifecycle()
     val volunteerTargetTitle by viewModel.volunteerTargetTitle.collectAsStateWithLifecycle()
     val showAiAssistant by viewModel.showAiAssistant.collectAsStateWithLifecycle()
+    val showUpdateDialog by viewModel.showUpdateDialog.collectAsStateWithLifecycle()
+    val appUpdateInfo by viewModel.appUpdateInfo.collectAsStateWithLifecycle()
     val toastMessage by viewModel.toastMessage.collectAsStateWithLifecycle()
 
     // Handle toast messages via snackbar
@@ -146,6 +149,9 @@ fun MainAppContent(viewModel: Ail4cViewModel) {
                 },
                 onOpenAiAssistant = {
                     viewModel.openAiAssistant()
+                },
+                onCheckUpdates = {
+                    viewModel.checkForUpdates(isUserTriggered = true)
                 },
                 onLogout = {
                     viewModel.logout()
@@ -322,6 +328,15 @@ fun MainAppContent(viewModel: Ail4cViewModel) {
                     }
                 )
             }
+        )
+    }
+
+    if (showUpdateDialog && appUpdateInfo != null) {
+        AppUpdateDialog(
+            updateInfo = appUpdateInfo!!,
+            currentVersionCode = viewModel.currentAppVersionCode,
+            currentVersionName = viewModel.currentAppVersionName,
+            onDismiss = { viewModel.dismissUpdateDialog() }
         )
     }
 }

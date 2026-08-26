@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.R
 import com.example.data.model.ActionItem
+import com.example.data.model.AppUpdateInfo
 import com.example.data.model.ContactMessage
 import com.example.data.model.GalleryItem
 import com.example.data.model.NewsArticle
@@ -130,6 +131,34 @@ class Ail4cViewModel(private val repository: Ail4cRepository) : ViewModel() {
     val showVolunteerDialog = MutableStateFlow(false)
     val volunteerTargetTitle = MutableStateFlow("")
     val showAiAssistant = MutableStateFlow(false)
+
+    // In-App Update states
+    val appUpdateInfo = MutableStateFlow<AppUpdateInfo?>(null)
+    val showUpdateDialog = MutableStateFlow(false)
+    val currentAppVersionCode = 1
+    val currentAppVersionName = "v1.0.0"
+
+    fun checkForUpdates(isUserTriggered: Boolean = false) {
+        viewModelScope.launch {
+            // Simulated / Cloud server update check logic
+            val latestInfo = AppUpdateInfo(
+                latestVersionCode = 2,
+                latestVersionName = "v2.0.0",
+                releaseNotes = "• Nouveau logo officiel ONG-AIL4C en haute définition\n• Système de mise à jour transparente sans désinstallation\n• Optimisation de la fluidité et synchronisation des formulaires",
+                downloadUrl = "https://github.com/atchouyaosylvain59/ong-ail4c-android/releases",
+                isMandatory = false
+            )
+            appUpdateInfo.value = latestInfo
+            showUpdateDialog.value = true
+            if (isUserTriggered) {
+                toastMessage.value = "Vérification des mises à jour terminée !"
+            }
+        }
+    }
+
+    fun dismissUpdateDialog() {
+        showUpdateDialog.value = false
+    }
 
     // Notification / Toast
     val toastMessage = MutableStateFlow<String?>(null)
