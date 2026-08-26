@@ -61,12 +61,16 @@ import com.example.ui.screens.NewsScreen
 import com.example.ui.screens.ObjectivesScreen
 import com.example.ui.screens.ProfileScreen
 import com.example.ui.screens.ProjectsScreen
+import com.example.ui.screens.SplashScreen
 import com.example.ui.screens.YouthEmploymentScreen
 import com.example.ui.theme.Ail4cTheme
 import com.example.ui.theme.ForestGreenPrimary
 import com.example.ui.viewmodel.Ail4cViewModel
 import com.example.ui.viewmodel.Ail4cViewModelFactory
 import com.example.ui.viewmodel.AppDestination
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -88,6 +92,16 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainAppContent(viewModel: Ail4cViewModel) {
+    var isSplashFinished by rememberSaveable { mutableStateOf(false) }
+
+    // Display Animated 3D Splash Video sequence before showing login/main content
+    if (!isSplashFinished) {
+        SplashScreen(
+            onSplashFinished = { isSplashFinished = true }
+        )
+        return
+    }
+
     val currentUserProfile by viewModel.currentUserProfile.collectAsStateWithLifecycle()
     val isCurrentUserAdmin by viewModel.isCurrentUserAdmin.collectAsStateWithLifecycle()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
