@@ -479,7 +479,7 @@ fun SocialPostCard(
                         .padding(3.dp)
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_launcher_custom_logo_1787715328062),
+                        painter = safePainterResource(resId = R.drawable.ic_launcher_custom_logo_1787715328062),
                         contentDescription = "Logo AIL4C",
                         modifier = Modifier.fillMaxSize()
                     )
@@ -537,7 +537,7 @@ fun SocialPostCard(
                     .height(150.dp)
             ) {
                 Image(
-                    painter = painterResource(id = post.imageRes),
+                    painter = safePainterResource(resId = post.imageRes, fallback = R.drawable.img_reboisement),
                     contentDescription = post.content,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()

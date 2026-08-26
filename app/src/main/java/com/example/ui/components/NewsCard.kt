@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.R
 import com.example.data.model.NewsArticle
 import com.example.ui.theme.AccentOrange
 import com.example.ui.theme.ForestGreenPrimary
@@ -54,16 +55,18 @@ fun NewsCard(
     val context = LocalContext.current
 
     fun shareArticle() {
-        val sendIntent: Intent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(
-                Intent.EXTRA_TEXT,
-                "« ${article.title} » - Actualité ONG-AIL4C (Association Ivoirienne de Lutte Contre le Changement Climatique et le Chômage) : ${article.summary}"
-            )
-            type = "text/plain"
-        }
-        val shareIntent = Intent.createChooser(sendIntent, "Partager l'actualité AIL4C")
-        context.startActivity(shareIntent)
+        try {
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(
+                    Intent.EXTRA_TEXT,
+                    "« ${article.title} » - Actualité ONG-AIL4C (Association Ivoirienne de Lutte Contre le Changement Climatique et le Chômage) : ${article.summary}"
+                )
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, "Partager l'actualité AIL4C")
+            context.startActivity(shareIntent)
+        } catch (_: Exception) {}
     }
 
     Card(
@@ -83,7 +86,7 @@ fun NewsCard(
                     .height(160.dp)
             ) {
                 Image(
-                    painter = painterResource(id = article.imageRes),
+                    painter = safePainterResource(resId = article.imageRes, fallback = R.drawable.img_reboisement),
                     contentDescription = article.title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxWidth().height(160.dp)

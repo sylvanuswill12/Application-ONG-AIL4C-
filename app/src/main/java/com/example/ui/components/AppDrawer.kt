@@ -107,7 +107,7 @@ fun AppDrawer(
                                 .padding(4.dp)
                         ) {
                             Image(
-                                painter = painterResource(id = R.drawable.ic_launcher_custom_logo_1787715328062),
+                                painter = safePainterResource(resId = R.drawable.ic_launcher_custom_logo_1787715328062),
                                 contentDescription = "Logo ONG-AIL4C",
                                 modifier = Modifier.size(42.dp)
                             )

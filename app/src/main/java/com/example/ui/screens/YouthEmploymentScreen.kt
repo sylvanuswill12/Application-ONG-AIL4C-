@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import com.example.ui.components.safePainterResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -124,7 +125,7 @@ fun YouthEmploymentScreen(
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.img_formation_vert),
+                        painter = safePainterResource(resId = R.drawable.img_formation_vert),
                         contentDescription = "Formation certifiante aux métiers verts ONG-AIL4C",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()

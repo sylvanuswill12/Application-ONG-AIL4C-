@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.R
 import com.example.data.model.ActionItem
 import com.example.ui.theme.AccentOrange
 import com.example.ui.theme.ForestGreenDark
@@ -68,7 +69,7 @@ fun ActionCard(
                     .height(180.dp)
             ) {
                 Image(
-                    painter = painterResource(id = action.imageRes),
+                    painter = safePainterResource(resId = action.imageRes, fallback = R.drawable.img_hero_community),
                     contentDescription = action.title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxWidth().height(180.dp)

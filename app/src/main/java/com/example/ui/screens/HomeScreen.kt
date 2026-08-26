@@ -57,6 +57,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import com.example.ui.components.safePainterResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -329,7 +330,7 @@ fun HomeScreen(
                                 .height(190.dp)
                         ) {
                             Image(
-                                painter = painterResource(id = featuredAction?.imageRes ?: R.drawable.img_hero_community),
+                                painter = safePainterResource(resId = featuredAction?.imageRes, fallback = R.drawable.img_hero_community),
                                 contentDescription = featuredAction?.title ?: "Action AIL4C",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.fillMaxSize()
@@ -708,7 +709,7 @@ fun ModernRecommendedCard(
                     .height(130.dp)
             ) {
                 Image(
-                    painter = painterResource(id = action.imageRes),
+                    painter = safePainterResource(resId = action.imageRes, fallback = R.drawable.img_hero_community),
                     contentDescription = action.title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()

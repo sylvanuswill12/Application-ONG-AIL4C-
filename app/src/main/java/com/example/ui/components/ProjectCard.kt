@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.R
 import com.example.data.model.ProjectItem
 import com.example.ui.theme.AccentOrange
 import com.example.ui.theme.ForestGreenLight
@@ -72,7 +73,7 @@ fun ProjectCard(
                     .height(160.dp)
             ) {
                 Image(
-                    painter = painterResource(id = project.imageRes),
+                    painter = safePainterResource(resId = project.imageRes, fallback = R.drawable.img_reboisement),
                     contentDescription = project.title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxWidth().height(160.dp)

@@ -67,6 +67,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import com.example.ui.components.safePainterResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -155,7 +156,7 @@ fun AuthScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Image(
-                                    painter = painterResource(id = R.drawable.ic_launcher_custom_logo_1787715328062),
+                                    painter = safePainterResource(resId = R.drawable.ic_launcher_custom_logo_1787715328062),
                                     contentDescription = "Logo",
                                     modifier = Modifier.size(28.dp)
                                 )
@@ -182,8 +183,8 @@ fun AuthScreen(
                                     .height(260.dp)
                             ) {
                                 Image(
-                                    painter = painterResource(
-                                        id = if (onboardingStep == 0) R.drawable.img_hero_community else R.drawable.img_formation_vert
+                                    painter = safePainterResource(
+                                        resId = if (onboardingStep == 0) R.drawable.img_hero_community else R.drawable.img_formation_vert
                                     ),
                                     contentDescription = "Illustration Onboarding",
                                     contentScale = ContentScale.Crop,

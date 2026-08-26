@@ -41,11 +41,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import com.example.ui.components.safePainterResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.R
 import com.example.data.model.GalleryItem
 import com.example.ui.components.AppFooter
 import com.example.ui.components.SectionHeader
@@ -183,7 +185,7 @@ private fun GalleryCard(
                     .height(200.dp)
             ) {
                 Image(
-                    painter = painterResource(id = item.imageRes),
+                    painter = safePainterResource(resId = item.imageRes, fallback = R.drawable.img_reboisement),
                     contentDescription = item.title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()

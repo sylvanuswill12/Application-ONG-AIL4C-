@@ -66,6 +66,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import com.example.ui.components.safePainterResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -257,7 +258,7 @@ fun SplashScreen(
             ) {
                 // High-Resolution 3D Render Banner/Logo matching the video
                 Image(
-                    painter = painterResource(id = R.drawable.img_splash_video_logo_1787743648079),
+                    painter = safePainterResource(resId = R.drawable.img_splash_video_logo_1787743648079, fallback = R.drawable.ic_launcher_custom_logo_1787715328062),
                     contentDescription = "Logo ONG-AIL4C 3D",
                     modifier = Modifier
                         .fillMaxWidth(0.92f)
@@ -395,7 +396,7 @@ fun SplashScreen(
                 contentAlignment = Alignment.TopCenter
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.img_splash_video_logo_1787743648079),
+                    painter = safePainterResource(resId = R.drawable.img_splash_video_logo_1787743648079, fallback = R.drawable.ic_launcher_custom_logo_1787715328062),
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()

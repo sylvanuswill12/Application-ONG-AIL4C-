@@ -79,6 +79,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.R
 import com.example.data.model.ActionItem
 import com.example.data.model.GalleryItem
 import com.example.data.model.NewsArticle
@@ -126,7 +127,7 @@ fun ActionDetailModal(
                             .height(230.dp)
                     ) {
                         Image(
-                            painter = painterResource(id = action.imageRes),
+                            painter = safePainterResource(resId = action.imageRes, fallback = R.drawable.img_hero_community),
                             contentDescription = action.title,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
@@ -377,7 +378,7 @@ fun ProjectDetailModal(
                             .height(220.dp)
                     ) {
                         Image(
-                            painter = painterResource(id = project.imageRes),
+                            painter = safePainterResource(resId = project.imageRes, fallback = R.drawable.img_reboisement),
                             contentDescription = project.title,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
@@ -554,16 +555,18 @@ fun NewsDetailModal(
     val context = LocalContext.current
 
     fun shareArticle() {
-        val sendIntent: Intent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(
-                Intent.EXTRA_TEXT,
-                "« ${article.title} » - Actualité ONG-AIL4C : ${article.summary}"
-            )
-            type = "text/plain"
-        }
-        val shareIntent = Intent.createChooser(sendIntent, "Partager l'actualité AIL4C")
-        context.startActivity(shareIntent)
+        try {
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(
+                    Intent.EXTRA_TEXT,
+                    "« ${article.title} » - Actualité ONG-AIL4C : ${article.summary}"
+                )
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, "Partager l'actualité AIL4C")
+            context.startActivity(shareIntent)
+        } catch (_: Exception) {}
     }
 
     Dialog(
@@ -596,7 +599,7 @@ fun NewsDetailModal(
                             .height(220.dp)
                     ) {
                         Image(
-                            painter = painterResource(id = article.imageRes),
+                            painter = safePainterResource(resId = article.imageRes, fallback = R.drawable.img_reboisement),
                             contentDescription = article.title,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
@@ -1279,7 +1282,7 @@ fun FullScreenImageViewer(
                 .background(Color.Black)
         ) {
             Image(
-                painter = painterResource(id = item.imageRes),
+                painter = safePainterResource(resId = item.imageRes, fallback = R.drawable.img_reboisement),
                 contentDescription = item.title,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.fillMaxSize()
