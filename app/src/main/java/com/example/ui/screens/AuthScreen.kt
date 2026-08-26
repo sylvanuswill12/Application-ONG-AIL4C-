@@ -155,7 +155,7 @@ fun AuthScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Image(
-                                    painter = painterResource(id = R.drawable.img_logo_ail4c),
+                                    painter = painterResource(id = R.drawable.ic_launcher_custom_logo_1787715328062),
                                     contentDescription = "Logo",
                                     modifier = Modifier.size(28.dp)
                                 )

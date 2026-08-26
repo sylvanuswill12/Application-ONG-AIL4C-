@@ -475,7 +475,7 @@ fun SocialPostCard(
                         .padding(3.dp)
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.img_logo_ail4c),
+                        painter = painterResource(id = R.drawable.ic_launcher_custom_logo_1787715328062),
                         contentDescription = "Logo AIL4C",
                         modifier = Modifier.fillMaxSize()
                     )
