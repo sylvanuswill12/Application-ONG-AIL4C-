@@ -16,21 +16,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,134 +54,146 @@ fun AppHeader(
     onAdminClick: () -> Unit,
     onLogoClick: () -> Unit,
     currentDestination: AppDestination,
+    isAdmin: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .shadow(elevation = 3.dp),
+            .shadow(elevation = 2.dp, shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)),
         color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 2.dp
+        tonalElevation = 1.dp
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            // Main Institutional Header
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Left: Clean Hamburger Menu Button
+            IconButton(
+                onClick = onMenuClick,
+                modifier = Modifier
+                    .testTag("menu_hamburger_button")
+                    .size(42.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFFF1F5F9))
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = "Ouvrir le menu de navigation",
+                    tint = ForestGreenPrimary,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+
+            // Middle: Logo & Title in a clean aligned layout
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .weight(1f)
+                    .clip(RoundedCornerShape(12.dp))
+                    .clickable { onLogoClick() }
+                    .padding(horizontal = 10.dp, vertical = 2.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Left: Menu Hamburger button
-                IconButton(
-                    onClick = onMenuClick,
+                Box(
                     modifier = Modifier
-                        .testTag("menu_hamburger_button")
-                        .size(48.dp)
+                        .size(36.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color.White)
+                        .shadow(elevation = 1.dp, shape = RoundedCornerShape(10.dp)),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = "Ouvrir le menu de navigation",
-                        tint = ForestGreenPrimary
+                    Image(
+                        painter = painterResource(id = R.drawable.img_logo_ail4c),
+                        contentDescription = "Logo officiel ONG-AIL4C",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.size(34.dp)
                     )
                 }
 
-                // Middle: Logo & Title
-                Row(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable { onLogoClick() }
-                        .padding(horizontal = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(42.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(Color.White)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.img_logo_ail4c),
-                            contentDescription = "Logo officiel ONG-AIL4C",
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier.size(42.dp)
-                        )
-                    }
+                Spacer(modifier = Modifier.width(10.dp))
 
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "ONG-AIL4C",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = ForestGreenPrimary,
-                                letterSpacing = (-0.3).sp
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Box(
-                                modifier = Modifier
-                                    .size(6.dp)
-                                    .clip(CircleShape)
-                                    .background(AccentOrange)
-                            )
-                        }
+                Column {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "Climat • Emploi des Jeunes • Environnement",
-                            style = MaterialTheme.typography.labelMedium,
-                            fontSize = 10.5.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            text = "ONG-AIL4C",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Black,
+                            color = ForestGreenPrimary,
+                            fontSize = 17.sp,
+                            letterSpacing = (-0.3).sp
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Box(
+                            modifier = Modifier
+                                .size(6.dp)
+                                .clip(CircleShape)
+                                .background(AccentOrange)
                         )
                     }
+                    Text(
+                        text = "Climat • Emploi • Jeunesse",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontSize = 10.5.sp,
+                        color = Color(0xFF64748B),
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+
+            // Right: Clean and balanced actions (Contact and Admin only)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // Quick Contact button
+                Button(
+                    onClick = onContactClick,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (currentDestination == AppDestination.CONTACT) ForestGreenPrimary else AccentOrange,
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(20.dp),
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                        horizontal = 14.dp,
+                        vertical = 6.dp
+                    ),
+                    modifier = Modifier
+                        .testTag("header_contact_button")
+                        .height(36.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Phone,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "Contact",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
 
-                // Right: Action buttons
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    // Quick "Nous contacter" button
-                    Button(
-                        onClick = onContactClick,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = AccentOrange,
-                            contentColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(20.dp),
-                        contentPadding = androidx.compose.foundation.layout.PaddingValues(
-                            horizontal = 12.dp,
-                            vertical = 6.dp
-                        ),
-                        modifier = Modifier
-                            .testTag("header_contact_button")
-                            .height(36.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Phone,
-                            contentDescription = null,
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "Contact",
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(4.dp))
-
-                    // Admin icon button
+                // Admin icon button - Restricted strictly to authorized admin emails
+                if (isAdmin) {
                     IconButton(
                         onClick = onAdminClick,
                         modifier = Modifier
                             .testTag("header_admin_button")
-                            .size(40.dp)
+                            .size(36.dp)
+                            .clip(CircleShape)
+                            .background(AccentOrange.copy(alpha = 0.12f))
                     ) {
                         Icon(
                             imageVector = Icons.Default.AdminPanelSettings,
                             contentDescription = "Espace administration",
-                            tint = if (currentDestination == AppDestination.ADMIN) AccentOrange else MaterialTheme.colorScheme.onSurfaceVariant
+                            tint = if (currentDestination == AppDestination.ADMIN) AccentOrange else ForestGreenDark,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 }
@@ -193,3 +201,4 @@ fun AppHeader(
         }
     }
 }
+

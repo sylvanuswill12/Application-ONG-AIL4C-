@@ -10,6 +10,7 @@ import com.example.data.model.GalleryItem
 import com.example.data.model.NewsArticle
 import com.example.data.model.OpportunityItem
 import com.example.data.model.ProjectItem
+import com.example.data.model.UserProfile
 import com.example.data.model.VolunteerApplication
 import com.example.data.repository.Ail4cRepository
 import kotlinx.coroutines.Dispatchers
@@ -18,8 +19,23 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+
+object AdminConfig {
+    val AUTHORIZED_ADMIN_EMAILS = setOf(
+        "atchouyaosylvain59@gmail.com",
+        "ail4c03@gmail.com"
+    )
+    const val ADMIN_PASSWORD = "AIL4CCI"
+
+    fun isAuthorizedEmail(email: String?): Boolean {
+        if (email.isNullOrBlank()) return false
+        val clean = email.trim().lowercase()
+        return AUTHORIZED_ADMIN_EMAILS.contains(clean)
+    }
+}
 
 enum class AppDestination(val title: String, val route: String) {
     HOME("Accueil", "home"),
@@ -32,7 +48,8 @@ enum class AppDestination(val title: String, val route: String) {
     NEWS("Actualités", "news"),
     GALLERY("Galerie", "gallery"),
     CONTACT("Contact", "contact"),
-    ADMIN("Administration", "admin")
+    ADMIN("Administration", "admin"),
+    PROFILE("Mon Profil", "profile")
 }
 
 class Ail4cViewModel(private val repository: Ail4cRepository) : ViewModel() {
@@ -47,6 +64,55 @@ class Ail4cViewModel(private val repository: Ail4cRepository) : ViewModel() {
         }
     }
 
+    // Active user session & authentication
+    val currentUserProfile: StateFlow<UserProfile?> = repository.currentUserProfile
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+    // Admin authorization check: only atchouyaosylvain59@gmail.com and ail4c03@gmail.com
+    val isCurrentUserAdmin: StateFlow<Boolean> = repository.currentUserProfile
+        .map { profile -> AdminConfig.isAuthorizedEmail(profile?.email) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    // Admin unlocked state (with password AIL4CCI)
+    val isAdminUnlocked = MutableStateFlow(false)
+
+    fun verifyAdminPassword(inputPassword: String): Boolean {
+        val isValid = inputPassword.trim() == AdminConfig.ADMIN_PASSWORD
+        if (isValid) {
+            isAdminUnlocked.value = true
+        }
+        return isValid
+    }
+
+    fun authenticateUser(profile: UserProfile, isAutoAdminUnlock: Boolean = false) {
+        viewModelScope.launch {
+            if (AdminConfig.isAuthorizedEmail(profile.email) && isAutoAdminUnlock) {
+                isAdminUnlocked.value = true
+            }
+            repository.saveUserProfile(profile)
+            if (AdminConfig.isAuthorizedEmail(profile.email)) {
+                toastMessage.value = "Bienvenue Administrateur ${profile.fullName} ! 🛡️"
+            } else {
+                toastMessage.value = "Bienvenue ${profile.fullName} sur l'application AIL4C ! 🌿"
+            }
+        }
+    }
+
+    fun updateUserProfile(updatedProfile: UserProfile) {
+        viewModelScope.launch {
+            repository.saveUserProfile(updatedProfile)
+            toastMessage.value = "Profil mis à jour avec succès ! ✅"
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            isAdminUnlocked.value = false
+            repository.clearUserSession()
+            toastMessage.value = "Vous avez été déconnecté."
+        }
+    }
+
     // Active screen navigation
     private val _currentDestination = MutableStateFlow(AppDestination.HOME)
     val currentDestination: StateFlow<AppDestination> = _currentDestination.asStateFlow()
@@ -55,7 +121,7 @@ class Ail4cViewModel(private val repository: Ail4cRepository) : ViewModel() {
         _currentDestination.value = destination
     }
 
-    // Modal / Lightbox states
+    // Modal / Lightbox / AI assistant states
     val selectedAction = MutableStateFlow<ActionItem?>(null)
     val selectedProject = MutableStateFlow<ProjectItem?>(null)
     val selectedNews = MutableStateFlow<NewsArticle?>(null)
@@ -63,11 +129,12 @@ class Ail4cViewModel(private val repository: Ail4cRepository) : ViewModel() {
     val fullscreenGalleryItem = MutableStateFlow<GalleryItem?>(null)
     val showVolunteerDialog = MutableStateFlow(false)
     val volunteerTargetTitle = MutableStateFlow("")
+    val showAiAssistant = MutableStateFlow(false)
 
     // Notification / Toast
     val toastMessage = MutableStateFlow<String?>(null)
 
-    // Data streams from Room
+    // Data streams from Room & Cloud sync
     val publishedActions = repository.publishedActions
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val allActions = repository.allActions
@@ -204,7 +271,7 @@ class Ail4cViewModel(private val repository: Ail4cRepository) : ViewModel() {
         if (cat == "Toutes") items else items.filter { it.category.contains(cat, ignoreCase = true) }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), staticGalleryItems)
 
-    // Contact form submission
+    // Contact form submission with cloud sync
     fun submitContact(
         fullName: String,
         email: String,
@@ -237,7 +304,7 @@ class Ail4cViewModel(private val repository: Ail4cRepository) : ViewModel() {
         }
     }
 
-    // Volunteer application submission
+    // Volunteer application submission with cloud sync
     fun submitVolunteerApplication(
         fullName: String,
         email: String,
@@ -274,88 +341,93 @@ class Ail4cViewModel(private val repository: Ail4cRepository) : ViewModel() {
         }
     }
 
-    // Admin CRUD Operations
+    // AI Assistant call
+    suspend fun askAi(prompt: String, history: List<Pair<String, Boolean>>, userName: String): String {
+        return repository.askGeminiAi(prompt, history, userName)
+    }
+
+    // Admin CRUD Operations with Realtime Room + Cloud sync
     fun addAction(action: ActionItem) {
         viewModelScope.launch {
             repository.insertAction(action)
-            toastMessage.value = "Action enregistrée avec succès !"
+            toastMessage.value = "Action enregistrée et synchronisée en temps réel !"
         }
     }
 
     fun updateAction(action: ActionItem) {
         viewModelScope.launch {
             repository.updateAction(action)
-            toastMessage.value = "Action mise à jour."
+            toastMessage.value = "Action mise à jour en temps réel."
         }
     }
 
     fun deleteAction(action: ActionItem) {
         viewModelScope.launch {
             repository.deleteAction(action)
-            toastMessage.value = "Action supprimée."
+            toastMessage.value = "Action supprimée en temps réel."
         }
     }
 
     fun addProject(project: ProjectItem) {
         viewModelScope.launch {
             repository.insertProject(project)
-            toastMessage.value = "Projet enregistré avec succès !"
+            toastMessage.value = "Projet enregistré et synchronisé en temps réel !"
         }
     }
 
     fun updateProject(project: ProjectItem) {
         viewModelScope.launch {
             repository.updateProject(project)
-            toastMessage.value = "Projet mis à jour."
+            toastMessage.value = "Projet mis à jour en temps réel."
         }
     }
 
     fun deleteProject(project: ProjectItem) {
         viewModelScope.launch {
             repository.deleteProject(project)
-            toastMessage.value = "Projet supprimé."
+            toastMessage.value = "Projet supprimé en temps réel."
         }
     }
 
     fun addNews(news: NewsArticle) {
         viewModelScope.launch {
             repository.insertNews(news)
-            toastMessage.value = "Actualité publiée avec succès !"
+            toastMessage.value = "Actualité publiée et synchronisée en temps réel !"
         }
     }
 
     fun updateNews(news: NewsArticle) {
         viewModelScope.launch {
             repository.updateNews(news)
-            toastMessage.value = "Actualité mise à jour."
+            toastMessage.value = "Actualité mise à jour en temps réel."
         }
     }
 
     fun deleteNews(news: NewsArticle) {
         viewModelScope.launch {
             repository.deleteNews(news)
-            toastMessage.value = "Actualité supprimée."
+            toastMessage.value = "Actualité supprimée en temps réel."
         }
     }
 
     fun addOpportunity(opp: OpportunityItem) {
         viewModelScope.launch {
             repository.insertOpportunity(opp)
-            toastMessage.value = "Opportunité publiée avec succès !"
+            toastMessage.value = "Opportunité publiée et synchronisée en temps réel !"
         }
     }
 
     fun updateOpportunity(opp: OpportunityItem) {
         viewModelScope.launch {
             repository.updateOpportunity(opp)
-            toastMessage.value = "Opportunité mise à jour."
+            toastMessage.value = "Opportunité mise à jour en temps réel."
         }
     }
 
     fun deleteOpportunity(opp: OpportunityItem) {
         viewModelScope.launch {
             repository.deleteOpportunity(opp)
-            toastMessage.value = "Opportunité supprimée."
+            toastMessage.value = "Opportunité supprimée en temps réel."
         }
     }
 
@@ -376,6 +448,14 @@ class Ail4cViewModel(private val repository: Ail4cRepository) : ViewModel() {
     fun openVolunteerDialog(targetTitle: String = "Bénévolat & Engagement AIL4C") {
         volunteerTargetTitle.value = targetTitle
         showVolunteerDialog.value = true
+    }
+
+    fun openAiAssistant() {
+        showAiAssistant.value = true
+    }
+
+    fun closeAiAssistant() {
+        showAiAssistant.value = false
     }
 
     fun clearToast() {

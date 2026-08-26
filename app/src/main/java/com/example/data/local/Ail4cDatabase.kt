@@ -12,6 +12,7 @@ import com.example.data.model.NewsArticle
 import com.example.data.model.OpportunityItem
 import com.example.data.model.ProjectItem
 import com.example.data.model.VolunteerApplication
+import com.example.data.model.UserProfile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,9 +24,10 @@ import kotlinx.coroutines.launch
         NewsArticle::class,
         OpportunityItem::class,
         ContactMessage::class,
-        VolunteerApplication::class
+        VolunteerApplication::class,
+        UserProfile::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class Ail4cDatabase : RoomDatabase() {
@@ -58,7 +60,7 @@ abstract class Ail4cDatabase : RoomDatabase() {
                         id = 1,
                         title = "Semaine de la Population à Bouaké : Santé, Climat & Lutte contre les VBG",
                         shortDescription = "Mobilisation historique à Bouaké en collaboration avec l'UNFPA et l'Université Alassane Ouattara (UAO).",
-                        fullStory = "Sous le leadership de son Président-Fondateur Ezékiel Aka et avec l'appui du Fonds des Nations unies pour la population (UNFPA), l'ONG-AIL4C a organisé la Semaine de la Population à Bouaké. Cet événement majeur a réuni des centaines d'étudiants, de leaders communautaires et de jeunes pour des ateliers sur la santé de la reproduction, la lutte contre les violences basées sur le genre (VBG) et la préservation de l'environnement face au réchauffement climatique.",
+                        fullStory = "Sous le leadership de son Président SENIN TCHOUMOU ESDRAS GEMIEL et avec l'appui du Fonds des Nations unies pour la population (UNFPA), l'ONG-AIL4C a organisé la Semaine de la Population à Bouaké. Cet événement majeur a réuni des centaines d'étudiants, de leaders communautaires et de jeunes pour des ateliers sur la santé de la reproduction, la lutte contre les violences basées sur le genre (VBG) et la préservation de l'environnement face au réchauffement climatique.",
                         category = "Sensibilisation communautaire",
                         date = "Juillet 2024 & Février 2026",
                         location = "Bouaké (Campus UAO & Quartiers)",
@@ -183,7 +185,7 @@ abstract class Ail4cDatabase : RoomDatabase() {
                         category = "Jeunesse & Emploi",
                         date = "18 Février 2026",
                         summary = "L'ONG-AIL4C et le Fonds des Nations unies pour la population (UNFPA) dressent un bilan remarquable sur la santé de la reproduction et l'éco-citoyenneté.",
-                        fullContent = "Dans la dynamique de son engagement sur le terrain, l'ONG-AIL4C a réuni à Bouaké et sur le campus de l'Université Alassane Ouattara des centaines de jeunes lors de la « Semaine de la Population ». Soutenu par l'UNFPA, cet événement a permis de mener des causeries éducatives sur la santé sexuelle et reproductive, la lutte contre les violences basées sur le genre (VBG) et la résilience face au réchauffement climatique.\n\n« Nous croyons fermement qu'une jeunesse épanouie et informée est la clé pour relever simultanément les défis sanitaires, sociaux et climatiques de la Côte d'Ivoire », a affirmé Ezékiel Aka, Président-Fondateur de l'ONG-AIL4C.",
+                        fullContent = "Dans la dynamique de son engagement sur le terrain, l'ONG-AIL4C a réuni à Bouaké et sur le campus de l'Université Alassane Ouattara des centaines de jeunes lors de la « Semaine de la Population ». Soutenu par l'UNFPA, cet événement a permis de mener des causeries éducatives sur la santé sexuelle et reproductive, la lutte contre les violences basées sur le genre (VBG) et la résilience face au réchauffement climatique.\n\n« Nous croyons fermement qu'une jeunesse épanouie et informée est la clé pour relever simultanément les défis sanitaires, sociaux et climatiques de la Côte d'Ivoire », a affirmé SENIN TCHOUMOU ESDRAS GEMIEL, Président de l'ONG-AIL4C.",
                         author = "Rédaction AIL4C / Instagram @ongail4c",
                         readTime = "4 min de lecture",
                         imageRes = R.drawable.img_hero_community,
@@ -209,18 +211,18 @@ abstract class Ail4cDatabase : RoomDatabase() {
                     ),
                     NewsArticle(
                         id = 3,
-                        title = "Mot du Président Ezékiel Aka : « La jeunesse au cœur de l'action climatique »",
+                        title = "Mot du Président SENIN TCHOUMOU ESDRAS GEMIEL : « La jeunesse au cœur de l'action climatique »",
                         category = "Institutionnel",
                         date = "02 Février 2026",
-                        summary = "Le Président-Fondateur réaffirme la vision d'AIL4C pour transformer l'éco-anxiété en force d'action et d'entrepreneuriat.",
+                        summary = "Le Président réaffirme la vision d'AIL4C pour transformer l'éco-anxiété en force d'action et d'entrepreneuriat.",
                         fullContent = "« Face aux effets tangibles du changement climatique en Côte d'Ivoire — hausse des températures, inondations urbaines, déforestation —, notre rôle est de donner aux jeunes les outils intellectuels, techniques et financiers pour bâtir l'avenir. L'ONG-AIL4C continuera d'arpenter les campus et les communautés pour susciter des vocations écologiques et citoyennes. »",
-                        author = "Cabinet du Président Ezékiel Aka",
+                        author = "Cabinet du Président SENIN TCHOUMOU ESDRAS GEMIEL",
                         readTime = "3 min de lecture",
                         imageRes = R.drawable.img_hero_community,
                         isFeatured = false,
                         socialPlatform = "Instagram",
                         socialUrl = "https://www.instagram.com/ongail4c?igsi=MW8wMG45anFpM2M1Mw==",
-                        hashtags = "#EzékielAka #VisionAIL4C #ChangementClimatique #CôtedIvoire"
+                        hashtags = "#SeninTchoumou #VisionAIL4C #ChangementClimatique #CôtedIvoire"
                     ),
                     NewsArticle(
                         id = 4,

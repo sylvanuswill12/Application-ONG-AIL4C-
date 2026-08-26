@@ -2,6 +2,8 @@ package com.example.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,24 +15,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AdminPanelSettings
-import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Collections
-import androidx.compose.material.icons.filled.Diversity3
 import androidx.compose.material.icons.filled.Eco
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.FolderSpecial
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Newspaper
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.TrackChanges
 import androidx.compose.material.icons.filled.VolunteerActivism
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
@@ -48,16 +55,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
+import com.example.data.model.UserProfile
 import com.example.ui.theme.AccentOrange
 import com.example.ui.theme.ForestGreenDark
 import com.example.ui.theme.ForestGreenPrimary
+import com.example.ui.viewmodel.AdminConfig
 import com.example.ui.viewmodel.AppDestination
 
 @Composable
 fun AppDrawer(
     currentDestination: AppDestination,
+    userProfile: UserProfile?,
     onDestinationSelected: (AppDestination) -> Unit,
+    onOpenAiAssistant: () -> Unit,
+    onLogout: () -> Unit,
     onCloseDrawer: () -> Unit,
+    isAdmin: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     ModalDrawerSheet(
@@ -79,21 +92,56 @@ fun AppDrawer(
                     .padding(20.dp)
             ) {
                 Column {
-                    Box(
-                        modifier = Modifier
-                            .size(54.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(Color.White)
-                            .padding(4.dp)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.img_logo_ail4c),
-                            contentDescription = "Logo ONG-AIL4C",
-                            modifier = Modifier.size(46.dp)
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color.White)
+                                .padding(4.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.img_logo_ail4c),
+                                contentDescription = "Logo ONG-AIL4C",
+                                modifier = Modifier.size(42.dp)
+                            )
+                        }
+
+                        // Connected User Avatar Badge
+                        userProfile?.let { user ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(20.dp))
+                                    .background(Color(0x33000000))
+                                    .clickable {
+                                        onDestinationSelected(AppDestination.PROFILE)
+                                        onCloseDrawer()
+                                    }
+                                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.Person,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = user.fullName.split(" ").firstOrNull() ?: "Profil",
+                                    color = Color.White,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     Text(
                         text = "ONG-AIL4C",
@@ -103,16 +151,127 @@ fun AppDrawer(
                     )
 
                     Text(
-                        text = "Association Ivoirienne de Lutte Contre le Changement Climatique et le Chômage",
+                        text = "Alliance Internationale des Leaders pour le Climat",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color(0xFFE2E8F0),
                         fontSize = 12.sp,
                         lineHeight = 16.sp
                     )
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Text(
+                        text = "Président : SENIN TCHOUMOU ESDRAS GEMIEL",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color(0xFFFDE68A),
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 11.sp
+                    )
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            // User Info Banner
+            userProfile?.let { user ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF0FDF4))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(ForestGreenPrimary),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = user.fullName.take(1).uppercase(),
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = user.fullName,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = ForestGreenDark
+                            )
+                            Text(
+                                text = user.email.ifBlank { user.phone },
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color(0xFF64748B),
+                                fontSize = 11.sp
+                            )
+                        }
+                        IconButton(
+                            onClick = onLogout,
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.ExitToApp,
+                                contentDescription = "Déconnexion",
+                                tint = Color(0xFFEF4444),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+            // AI Chat Assistant Button
+            NavigationDrawerItem(
+                label = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "Assistant IA AIL4C",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = ForestGreenPrimary
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(AccentOrange)
+                                .padding(horizontal = 4.dp, vertical = 2.dp)
+                        ) {
+                            Text("IA", color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.AutoAwesome,
+                        contentDescription = "Assistant IA",
+                        tint = ForestGreenPrimary
+                    )
+                },
+                selected = false,
+                onClick = {
+                    onOpenAiAssistant()
+                    onCloseDrawer()
+                },
+                colors = NavigationDrawerItemDefaults.colors(
+                    unselectedContainerColor = Color(0xFFECFDF5)
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
+                    .testTag("nav_item_assistant_ia")
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
 
             // Navigation Items
             DrawerItemRow(
@@ -166,7 +325,7 @@ fun AppDrawer(
             )
 
             DrawerItemRow(
-                title = "Jeunesse & Emploi vert",
+                title = "Jeunesse & Emploi",
                 icon = Icons.Default.School,
                 selected = currentDestination == AppDestination.YOUTH_EMPLOYMENT,
                 onClick = {
@@ -215,21 +374,34 @@ fun AppDrawer(
                 }
             )
 
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                color = MaterialTheme.colorScheme.outlineVariant
+            DrawerItemRow(
+                title = "Mon Profil",
+                icon = Icons.Default.Person,
+                selected = currentDestination == AppDestination.PROFILE,
+                onClick = {
+                    onDestinationSelected(AppDestination.PROFILE)
+                    onCloseDrawer()
+                }
             )
 
-            DrawerItemRow(
-                title = "Espace Administration",
-                icon = Icons.Default.AdminPanelSettings,
-                selected = currentDestination == AppDestination.ADMIN,
-                onClick = {
-                    onDestinationSelected(AppDestination.ADMIN)
-                    onCloseDrawer()
-                },
-                accent = true
-            )
+            // Only users with authorized admin emails can see the Admin option
+            if (isAdmin) {
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
+
+                DrawerItemRow(
+                    title = "Espace Administration",
+                    icon = Icons.Default.AdminPanelSettings,
+                    selected = currentDestination == AppDestination.ADMIN,
+                    onClick = {
+                        onDestinationSelected(AppDestination.ADMIN)
+                        onCloseDrawer()
+                    },
+                    accent = true
+                )
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
         }

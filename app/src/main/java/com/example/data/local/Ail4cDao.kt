@@ -123,4 +123,17 @@ interface Ail4cDao {
 
     @Delete
     suspend fun deleteVolunteerApplication(application: VolunteerApplication)
+
+    // User Profile
+    @Query("SELECT * FROM user_profiles ORDER BY registeredAt DESC LIMIT 1")
+    fun getUserProfile(): Flow<com.example.data.model.UserProfile?>
+
+    @Query("SELECT * FROM user_profiles ORDER BY registeredAt DESC LIMIT 1")
+    suspend fun getCurrentUserProfileDirect(): com.example.data.model.UserProfile?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveUserProfile(profile: com.example.data.model.UserProfile)
+
+    @Query("DELETE FROM user_profiles")
+    suspend fun clearUserProfiles()
 }

@@ -1,7 +1,6 @@
 package com.example
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -16,8 +15,13 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -30,11 +34,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ui.components.ActionDetailModal
+import com.example.ui.components.AiAssistantModal
 import com.example.ui.components.AppDrawer
 import com.example.ui.components.AppHeader
 import com.example.ui.components.FullScreenImageViewer
+import com.example.ui.components.ModernBottomNavBar
 import com.example.ui.components.NewsDetailModal
 import com.example.ui.components.OpportunityDetailModal
 import com.example.ui.components.ProjectDetailModal
@@ -42,15 +51,18 @@ import com.example.ui.components.VolunteerApplicationDialog
 import com.example.ui.screens.AboutScreen
 import com.example.ui.screens.ActionsScreen
 import com.example.ui.screens.AdminScreen
+import com.example.ui.screens.AuthScreen
 import com.example.ui.screens.ClimateEnvironmentScreen
 import com.example.ui.screens.ContactScreen
 import com.example.ui.screens.GalleryScreen
 import com.example.ui.screens.HomeScreen
 import com.example.ui.screens.NewsScreen
 import com.example.ui.screens.ObjectivesScreen
+import com.example.ui.screens.ProfileScreen
 import com.example.ui.screens.ProjectsScreen
 import com.example.ui.screens.YouthEmploymentScreen
 import com.example.ui.theme.Ail4cTheme
+import com.example.ui.theme.ForestGreenPrimary
 import com.example.ui.viewmodel.Ail4cViewModel
 import com.example.ui.viewmodel.Ail4cViewModelFactory
 import com.example.ui.viewmodel.AppDestination
@@ -75,6 +87,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainAppContent(viewModel: Ail4cViewModel) {
+    val currentUserProfile by viewModel.currentUserProfile.collectAsStateWithLifecycle()
+    val isCurrentUserAdmin by viewModel.isCurrentUserAdmin.collectAsStateWithLifecycle()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -87,7 +101,30 @@ fun MainAppContent(viewModel: Ail4cViewModel) {
     val fullscreenGalleryItem by viewModel.fullscreenGalleryItem.collectAsStateWithLifecycle()
     val showVolunteerDialog by viewModel.showVolunteerDialog.collectAsStateWithLifecycle()
     val volunteerTargetTitle by viewModel.volunteerTargetTitle.collectAsStateWithLifecycle()
+    val showAiAssistant by viewModel.showAiAssistant.collectAsStateWithLifecycle()
     val toastMessage by viewModel.toastMessage.collectAsStateWithLifecycle()
+
+    // Handle toast messages via snackbar
+    LaunchedEffect(toastMessage) {
+        toastMessage?.let { msg ->
+            snackbarHostState.showSnackbar(msg)
+            viewModel.clearToast()
+        }
+    }
+
+    // MANDATORY AUTHENTICATION GATE: If not logged in, show AuthScreen first!
+    if (currentUserProfile == null) {
+        Scaffold(
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            contentWindowInsets = WindowInsets.safeDrawing
+        ) { padding ->
+            AuthScreen(
+                viewModel = viewModel,
+                modifier = Modifier.padding(padding)
+            )
+        }
+        return
+    }
 
     // Handle back button: return to Home first if inside another screen, or close drawer if open
     BackHandler(enabled = drawerState.isOpen || currentDestination != AppDestination.HOME) {
@@ -98,25 +135,25 @@ fun MainAppContent(viewModel: Ail4cViewModel) {
         }
     }
 
-    // Handle toast messages via snackbar
-    LaunchedEffect(toastMessage) {
-        toastMessage?.let { msg ->
-            snackbarHostState.showSnackbar(msg)
-            viewModel.clearToast()
-        }
-    }
-
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             AppDrawer(
                 currentDestination = currentDestination,
+                userProfile = currentUserProfile,
                 onDestinationSelected = { dest ->
                     viewModel.navigateTo(dest)
                 },
+                onOpenAiAssistant = {
+                    viewModel.openAiAssistant()
+                },
+                onLogout = {
+                    viewModel.logout()
+                },
                 onCloseDrawer = {
                     scope.launch { drawerState.close() }
-                }
+                },
+                isAdmin = isCurrentUserAdmin
             )
         }
     ) {
@@ -137,8 +174,34 @@ fun MainAppContent(viewModel: Ail4cViewModel) {
                     onLogoClick = {
                         viewModel.navigateTo(AppDestination.HOME)
                     },
-                    currentDestination = currentDestination
+                    currentDestination = currentDestination,
+                    isAdmin = isCurrentUserAdmin
                 )
+            },
+            bottomBar = {
+                ModernBottomNavBar(
+                    currentDestination = currentDestination,
+                    onNavigate = { dest ->
+                        viewModel.navigateTo(dest)
+                    }
+                )
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { viewModel.openAiAssistant() },
+                    containerColor = ForestGreenPrimary,
+                    contentColor = Color.White,
+                    shape = CircleShape,
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .testTag("fab_ai_assistant")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AutoAwesome,
+                        contentDescription = "Assistant IA Écologique",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             },
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHostState)
@@ -174,10 +237,20 @@ fun MainAppContent(viewModel: Ail4cViewModel) {
                         AppDestination.GALLERY -> GalleryScreen(viewModel = viewModel)
                         AppDestination.CONTACT -> ContactScreen(viewModel = viewModel)
                         AppDestination.ADMIN -> AdminScreen(viewModel = viewModel)
+                        AppDestination.PROFILE -> ProfileScreen(viewModel = viewModel)
                     }
                 }
             }
         }
+    }
+
+    // AI Assistant Modal Bottom Sheet
+    if (showAiAssistant) {
+        AiAssistantModal(
+            viewModel = viewModel,
+            userName = currentUserProfile?.fullName ?: "Membre AIL4C",
+            onDismiss = { viewModel.closeAiAssistant() }
+        )
     }
 
     // Modal Dialogs
