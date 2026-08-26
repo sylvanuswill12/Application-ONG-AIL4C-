@@ -319,8 +319,12 @@ abstract class Ail4cDatabase : RoomDatabase() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
             scope.launch(Dispatchers.IO) {
-                INSTANCE?.let { database ->
-                    populateInitialData(database.ail4cDao())
+                try {
+                    INSTANCE?.let { database ->
+                        populateInitialData(database.ail4cDao())
+                    }
+                } catch (t: Throwable) {
+                    android.util.Log.e("Ail4cDatabase", "Error initializing database: ${t.message}")
                 }
             }
         }

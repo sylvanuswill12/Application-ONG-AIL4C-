@@ -168,17 +168,21 @@ fun DonationDialog(
     }
 
     fun shareDonationReceipt() {
-        val formattedAmount = NumberFormat.getNumberInstance(Locale.FRENCH).format(effectiveAmount)
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(
-                Intent.EXTRA_TEXT,
-                "💚 J'ai soutenu l'ONG-AIL4C avec un don de $formattedAmount FCFA pour « $selectedCause » ! " +
-                        "Rejoignez-nous pour protéger le climat et bâtir les métiers verts en Côte d'Ivoire 🇨🇮. " +
-                        "Réf: $donationReference"
-            )
+        try {
+            val formattedAmount = NumberFormat.getNumberInstance(Locale.FRENCH).format(effectiveAmount)
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(
+                    Intent.EXTRA_TEXT,
+                    "💚 J'ai soutenu l'ONG-AIL4C avec un don de $formattedAmount FCFA pour « $selectedCause » ! " +
+                            "Rejoignez-nous pour protéger le climat et bâtir les métiers verts en Côte d'Ivoire 🇨🇮. " +
+                            "Réf: $donationReference"
+                )
+            }
+            context.startActivity(Intent.createChooser(shareIntent, "Partager mon reçu de don AIL4C"))
+        } catch (_: Exception) {
+            Toast.makeText(context, "Impossible de partager le reçu pour le moment", Toast.LENGTH_SHORT).show()
         }
-        context.startActivity(Intent.createChooser(shareIntent, "Partager mon reçu de don AIL4C"))
     }
 
     Dialog(

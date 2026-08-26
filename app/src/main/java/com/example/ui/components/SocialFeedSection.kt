@@ -171,16 +171,20 @@ fun SocialFeedSection(
     }
 
     fun sharePost(post: SocialFeedPost) {
-        val sendIntent: Intent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(
-                Intent.EXTRA_TEXT,
-                "${post.content}\n\nRetrouvez l'ONG-AIL4C sur ${post.platform} : ${post.url}"
-            )
-            type = "text/plain"
+        try {
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(
+                    Intent.EXTRA_TEXT,
+                    "${post.content}\n\nRetrouvez l'ONG-AIL4C sur ${post.platform} : ${post.url}"
+                )
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, "Partager la publication AIL4C")
+            context.startActivity(shareIntent)
+        } catch (_: Exception) {
+            Toast.makeText(context, "Impossible de partager pour le moment", Toast.LENGTH_SHORT).show()
         }
-        val shareIntent = Intent.createChooser(sendIntent, "Partager la publication AIL4C")
-        context.startActivity(shareIntent)
     }
 
     Column(

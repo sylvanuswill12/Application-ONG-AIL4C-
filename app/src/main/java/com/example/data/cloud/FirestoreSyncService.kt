@@ -24,11 +24,22 @@ class FirestoreSyncService(
 
     init {
         try {
-            firestoreInstance = FirebaseFirestore.getInstance()
-            Log.d(TAG, "Firebase Firestore initialized successfully.")
-            startRealtimeListeners()
-        } catch (e: Exception) {
-            Log.w(TAG, "Firestore initialization skipped/deferred: ${e.message}")
+            // Check if Firebase is available without crashing
+            val defaultApp = try {
+                com.google.firebase.FirebaseApp.getInstance()
+            } catch (_: Throwable) {
+                null
+            }
+            if (defaultApp != null) {
+                firestoreInstance = FirebaseFirestore.getInstance()
+                Log.d(TAG, "Firebase Firestore initialized successfully.")
+                startRealtimeListeners()
+            } else {
+                Log.i(TAG, "Firestore operating in offline/local-first mode.")
+            }
+        } catch (t: Throwable) {
+            Log.w(TAG, "Firestore initialization skipped: ${t.message}")
+            firestoreInstance = null
         }
     }
 
