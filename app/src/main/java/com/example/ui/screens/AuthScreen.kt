@@ -527,11 +527,11 @@ fun AuthScreen(
                                 viewModel.authenticateUser(
                                     UserProfile(
                                         id = "user_default",
-                                        fullName = "Sylvain Atchouyao",
-                                        email = "atchouyaosylvain59@gmail.com",
-                                        phone = "+225 07 77 12 34 56",
+                                        fullName = "Administrateur ONG-AIL4C",
+                                        email = "ail4c03@gmail.com",
+                                        phone = "+225 07 48 37 32 50",
                                         city = "Bouaké & Abidjan",
-                                        roleInterest = "Administrateur Exécutif ONG-AIL4C",
+                                        roleInterest = "Administration & Coordination ONG-AIL4C",
                                         isMember = true
                                     ),
                                     isAutoAdminUnlock = true
@@ -552,7 +552,7 @@ fun AuthScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Connexion Rapide Admin (Sylvain)",
+                                text = "Connexion Rapide Administrateur",
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 14.sp
                             )
